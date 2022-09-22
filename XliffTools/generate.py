@@ -6,9 +6,16 @@ from common import findXliff, parseXliffPath
 def generateExcel(inputPath, outputPath):
     # key: 每个翻译条目, value: 各个语言的翻译
     transData = {}
+    langData = []
     if inputPath == None:
         return
     xliffs = findXliff(inputPath)
     for path in xliffs:
-        parseXliffPath(path, transData)
-    print(f"transData:{transData}")
+        parseXliffPath(path, langData, transData)
+    
+    for lang in langData:
+        print(f"lang:{lang}")
+
+    for key in transData:
+        print(f"unit-id:{key}, trans:{transData[key]}")
+
