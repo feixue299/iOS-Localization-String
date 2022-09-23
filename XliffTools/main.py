@@ -8,8 +8,9 @@ from generate import generateExcel
 
 if __name__ == "__main__":
     argCount = len(sys.argv)
-    if argCount >= 2:
-        generateExcel(sys.argv[1], None)
+    print(sys.argv)
     if argCount >= 3:
         generateExcel(sys.argv[1], sys.argv[2])
+    else:
+        print("缺少路径")
     
