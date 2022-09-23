@@ -5,12 +5,13 @@ from common import findXliff, parseXliffPath
 # 第一个参数为xliff的输入路径，如果路径为文件夹则查询该目录底下的所有xliff
 # 第二个参数为输出的路径，路径存在则为尝试匹配原文件中字段，路径不存在则新建Excel
 def generateExcel(inputPath, outputPath):
-    # key: 每个翻译条目, value: 各个语言的翻译
-    transData = {}
-    langData = []
     if inputPath == None or outputPath == None:
         print("缺少输入或输出路径")
         return
+
+    # key: 每个翻译条目, value: 各个语言的翻译
+    transData = {}
+    langData = []
     xliffs = findXliff(inputPath)
     
     for path in xliffs:
@@ -49,6 +50,15 @@ def openpyxlParse(outputPath, langData, transData):
 
 # 排序语言
 def sortLang(langData: list):
+    advance("ru", langData)
+    advance("pt-PT", langData)
+    advance("pl", langData)
+    advance("sv", langData)
+    advance("nl", langData)
+    advance("de", langData)
+    advance("fr", langData)
+    advance("it", langData)
+    advance("es", langData)
     advance("zh-Hans", langData)
     advance("en", langData)
 
@@ -79,6 +89,7 @@ def pandasParse(outputPath, langData, transData):
             print(text)
             csvfile.write(f"{text}\t")
         csvfile.write("\n")
+    csvfile.close()
     #该模块以弃用，建议使用openpyxl
     data = pd.read_csv(csvpath, sep="\t")
     excel_path = outputPath + "/ios.xls"

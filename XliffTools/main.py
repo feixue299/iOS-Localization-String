@@ -5,12 +5,18 @@
 
 import sys
 from generate import generateExcel
+from merge import mergeExcelToXliffs
+
 
 if __name__ == "__main__":
     argCount = len(sys.argv)
-    print(sys.argv)
-    if argCount >= 3:
-        generateExcel(sys.argv[1], sys.argv[2])
+    if argCount >= 4:
+        if "-g" == sys.argv[1]:
+            generateExcel(sys.argv[2], sys.argv[3])
+        elif "-r" == sys.argv[1]:
+            mergeExcelToXliffs(sys.argv[2], sys.argv[3])
+        else:
+            print("请输入 -g 来生成或 -r来读取数据")
     else:
-        print("缺少路径")
+        print("缺少参数, eg: -g [inputPath] [outputPath]")
     

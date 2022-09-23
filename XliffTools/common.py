@@ -1,8 +1,7 @@
+from importlib.resources import path
 import os
-from re import T
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
-import pandas as pd
 
 def tag_uri_and_name(elem):
     if elem.tag[0] == "{":
@@ -24,7 +23,7 @@ def findXliff(path):
         else:
             print("这不是一个xliff文件")
     else:
-        print("这是一个特殊文件或者路径不存在")
+        print(f"这是一个特殊文件或者路径不存在,路径:{path}")
 
 
 def findAllFile(path):
@@ -58,7 +57,6 @@ def parseXliffQuick(xliff: Element, lang, data):
     else:
         url = ""
     file = next(xliff.iter(f"{url}file"))
-    source_language = file.attrib["source-language"]
     target_language = file.attrib["target-language"]
     lang.append(target_language)
 
@@ -112,3 +110,45 @@ def parseTransBody(body: Element):
     else:
         return None, None
     
+
+def mergeTransDataToXliff(langData, transData, xliffPath):
+    
+    tree = ET.parse(xliffPath)
+    xliff = tree.getroot()
+    url, tag = tag_uri_and_name(xliff)
+    ET.register_namespace('', url)
+    if url != None:
+        url = "{" + url + "}"
+    else:
+        url = ""
+
+    file = next(xliff.iter(f"{url}file"))
+    target_language = file.attrib["target-language"]
+    if target_language not in langData:
+        return
+
+    for unit in xliff.iter(f"{url}trans-unit"):
+        id, s, t = getTransUnit(unit)
+        if t != None and id in transData:
+            text = transData[id].get(target_language, "")
+            t.text = f"{text}"
+        
+    tree.write(xliffPath, encoding="UTF-8")
+
+    # with open(xliffPath, "r+") as f:
+    #     content = f.read()
+    #     f.seek(0, 0)
+    #     f.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+    #     f.close()
+    
+
+
+def getTransUnit(unit: Element):
+    id = unit.attrib["id"]
+    s, t = None, None
+    for body in unit:
+        if "source" in body.tag:
+            s = body
+        elif "target" in body.tag:
+            t = body
+    return id, s, t
