@@ -134,12 +134,6 @@ def mergeTransDataToXliff(langData, transData, xliffPath):
             t.text = f"{text}"
         
     tree.write(xliffPath, encoding="UTF-8")
-
-    # with open(xliffPath, "r+") as f:
-    #     content = f.read()
-    #     f.seek(0, 0)
-    #     f.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
-    #     f.close()
     
 
 
@@ -152,3 +146,7 @@ def getTransUnit(unit: Element):
         elif "target" in body.tag:
             t = body
     return id, s, t
+
+
+def getSuperPath(path):
+    return os.path.abspath(os.path.join(path, ".."))

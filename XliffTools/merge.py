@@ -19,13 +19,14 @@ def mergeExcelToXliffs(inputPath, outputPath):
     for indexs in df.index:
         rowData = df.loc[indexs]
         unit_id = rowData.values[0]
-        lang_row = rowData.values[1:-1]
+        lang_row = rowData.values[1:]
         trans_dic = {}
         for i in range(len(lang_row)):
             trans_dic[langData[i]] = lang_row[i]
         transData[unit_id] = trans_dic
 
     xliffs = findXliff(outputPath)
+    #TODO: add target node
 
     for path in xliffs:
         mergeTransDataToXliff(langData, transData, path)

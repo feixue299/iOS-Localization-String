@@ -1,3 +1,4 @@
+from operator import index
 import pandas as pd
 from openpyxl import Workbook
 from common import findXliff, parseXliffPath
@@ -33,13 +34,15 @@ def openpyxlParse(outputPath, langData, transData):
 
     sheet.append(["unit-id"] + langData)
     
+    index_count = 1
     for key in transData:
+        index_count += 1
         row_data = []
         row_data.append(key)
         for lang in langData:
             text = transData[key][lang]
-            if text == None:
-                text = ""
+            if text == None or len(text) == 0 or text == "None":
+                text = f"=GOOGLETRANSLATE(B{index_count},\"en\",\"{lang}\")"
             text = text.strip('"')
             text = text.strip("'")
             row_data.append(text)
