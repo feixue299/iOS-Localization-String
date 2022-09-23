@@ -19,6 +19,7 @@ def generateExcel(inputPath, outputPath):
     openpyxlParse(outputPath, langData, transData)
     
 
+# 使用openpyxl解析
 def openpyxlParse(outputPath, langData, transData):
     excel_path = outputPath + "/ios.xlsx"
     workbook = Workbook()
@@ -26,6 +27,9 @@ def openpyxlParse(outputPath, langData, transData):
     # 默认sheet
     sheet = workbook.active
     sheet.title = "默认sheet"
+    sortLang(langData)
+    
+
     sheet.append(["unit-id"] + langData)
     
     for key in transData:
@@ -41,6 +45,20 @@ def openpyxlParse(outputPath, langData, transData):
         sheet.append(row_data)
     
     workbook.save(excel_path)
+
+
+# 排序语言
+def sortLang(langData: list):
+    advance("zh-Hans", langData)
+    advance("en", langData)
+
+
+# 将lang提前
+def advance(lang, langData):
+    if lang in langData:
+        langData.remove(lang)
+        langData.insert(0, lang)
+
 
 # 使用panda解析
 def pandasParse(outputPath, langData, transData):
