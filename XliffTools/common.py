@@ -129,9 +129,13 @@ def mergeTransDataToXliff(langData, transData, xliffPath):
 
     for unit in xliff.iter(f"{url}trans-unit"):
         id, s, t = getTransUnit(unit)
-        if t != None and id in transData:
+        if t == None:
+            t = ET.Element("target")
+            unit.append(t)
+        if id in transData:
             text = transData[id].get(target_language, "")
             t.text = f"{text}"
+            
         
     tree.write(xliffPath, encoding="UTF-8")
     
