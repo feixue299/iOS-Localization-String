@@ -53,17 +53,10 @@ def openpyxlParse(outputPath, langData, transData):
 
 # 排序语言
 def sortLang(langData: list):
-    advance("ru", langData)
-    advance("pt-PT", langData)
-    advance("pl", langData)
-    advance("sv", langData)
-    advance("nl", langData)
-    advance("de", langData)
-    advance("fr", langData)
-    advance("it", langData)
-    advance("es", langData)
-    advance("zh-Hans", langData)
-    advance("en", langData)
+    sort_lang = ["en", "zh-Hans", "es", "it", "fr", "de", "nl", "sv", "pl", "pt-PT", "ru"]
+    sort_lang.reverse()
+    for lang in sort_lang:
+        advance(lang, langData)
 
 
 # 将lang提前
