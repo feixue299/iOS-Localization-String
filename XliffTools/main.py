@@ -18,5 +18,5 @@ if __name__ == "__main__":
         else:
             print("请输入 -g 来生成或 -r来读取数据")
     else:
-        print("缺少参数, eg: -g [inputPath] [outputPath]")
+        print("缺少参数, eg: -g [xliffPath] [xlsxPath] or -r [xlsxPath] [xliffPath]")
     
