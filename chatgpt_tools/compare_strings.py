@@ -6,13 +6,17 @@ def compare(dict1, dict2):
     diffDic1 = []
     diffDic2 = []
 
+    key_group1 = [list(d.keys())[0] for d in dict1]
+    key_group2 = [list(d.keys())[0] for d in dict2]
     for i in range(len(dict1)):
-        if list(dict1[i].keys())[0] not in [list(d.keys())[0] for d in dict2]:
-            diffDic1.append(list(dict1[i].keys())[0])
+        key = list(dict1[i].keys())[0]
+        if key not in key_group2:
+            diffDic1.append(key)
     
     for j in range(len(dict2)):
-        if list(dict2[j].keys())[0] not in [list(d.keys())[0] for d in dict1]:
-            diffDic2.append(list(dict2[j].keys())[0])
+        key = list(dict2[j].keys())[0]
+        if key not in key_group1:
+            diffDic2.append(key)
 
     return diffDic1, diffDic2
 
