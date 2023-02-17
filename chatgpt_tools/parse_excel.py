@@ -40,4 +40,4 @@ for row in worksheet.iter_rows(min_row=2):
         # 写入数据到文件
         output_filename = f"{header}.strings"
         with open(output_filename, "a", encoding="utf-8") as f:
-            f.write(f'"{key}" = "{value}";\n')
+            f.write(f'"{key}" = "{value.strip()}";\n')
