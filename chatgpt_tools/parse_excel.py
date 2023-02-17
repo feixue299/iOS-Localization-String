@@ -2,47 +2,42 @@ import sys
 import os
 import openpyxl
 
-# 获取命令行输入的路径
-if len(sys.argv) > 1:
-    path = sys.argv[1]
-else:
-    print("请提供需要检查的Excel文件路径")
-    sys.exit()
+# 读取命令行参数
+if len(sys.argv) != 2:
+    print("请指定Excel文件路径")
+    sys.exit(1)
 
-# 检查文件是否存在
-if not os.path.isfile(path):
-    print("指定路径不是一个有效的文件路径")
-    sys.exit()
+excel_file_path = sys.argv[1]
 
-# 检查文件是否为Excel文件
-if not path.endswith(".xlsx"):
-    print("指定文件不是一个Excel文件")
-    sys.exit()
+# 检查文件类型
+if not excel_file_path.endswith(".xlsx"):
+    print("文件不是一个有效的Excel文件")
+    sys.exit(1)
 
-# 解析Excel文件
-workbook = openpyxl.load_workbook(path)
-sheet = workbook.active
-rows = []
-for row in sheet.iter_rows():
-    row_data = []
-    for cell in row:
-        row_data.append(cell.value)
-    rows.append(row_data)
+# 打开工作簿并选择第一个工作表
+workbook = openpyxl.load_workbook(excel_file_path)
+worksheet = workbook.active
 
-# 生成文件
-header = rows[0][1:]  # 第一行的数据
-for i in range(1, len(rows[0])):
-    if not header[i-1] or all(row[i] is None for row in rows[1:]):  # 不包含值为空的列
+# 遍历数据行
+for row in worksheet.iter_rows(min_row=2):
+    # 获取第一列的值
+    key = row[0].value
+    if key is None:
         continue
-    file_data = []
-    for j in range(1, len(rows)):
-        if rows[j][i] is None:  # 不包含值为空的行
+
+    # 遍历数据列
+    for i, cell in enumerate(row[1:], start=2):
+        # 获取列头的值
+        header = worksheet.cell(row=1, column=i).value
+        if header is None:
             continue
-        data = f'"{rows[j][0]}" = "{rows[j][i]}" ;'
-        file_data.append(data)
-    if not file_data:
-        continue
-    file_name = f"{header[i-1]}.strings"
-    with open(file_name, "w") as f:
-        f.write('\n'.join(file_data))
-    print(f"{file_name} 生成成功")
+
+        # 获取当前列的值
+        value = cell.value
+        if value is None:
+            continue
+
+        # 写入数据到文件
+        output_filename = f"{header}.strings"
+        with open(output_filename, "a", encoding="utf-8") as f:
+            f.write(f'"{key}" = "{value}";\n')
