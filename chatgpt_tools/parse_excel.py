@@ -20,30 +20,78 @@ def read_excel_file(file_path):
 def is_valid_data(column1, column2):
     return column1 is not None and column2 is not None
 
-# 处理数据并写入文件
-def process_data(data, output_file_path):
+
+# 返回数据组，[{lang: [{key: value}]}]
+def process_data(data):
     # 按第一行的顺序生成文件列表
     header_row = data[0]
-    output_files = []
+    langsDic = []
     for i in range(1, len(header_row)):
-        if header_row[i] and header_row[i].strip() != "":
-            output_files.append(header_row[i])
+        if header_row[i]:
+            langsDic.append({header_row[i]: []})
     
+    langs = []
+    for langDic in langsDic:
+        langs.append(list(langDic.keys())[0])
+
+    for langDic in langsDic:
+        lang = list(langDic.keys())[0]
+        if lang.strip() == "":
+            continue
+        key_group = []
+        for row in data[1:]:
+            column1, column2 = row[0], row[langs.index(lang) + 1]
+
+            if column1 in key_group:
+                continue
+            else:
+                key_group.append(column1)
+
+            if column1 is not None and column1.strip() != "" and is_valid_data(column1, column2):
+                dic = {column1: column2.replace("{#}", "%@")}
+                langDic[lang].append(dic)
+    return langsDic
+        
+
+# 处理数据并写入文件
+def process_data_and_write_file(data, output_file_path):
+    process_data_and_write_file_with_other_files(data, output_file_path, [])
+                    
+
+def process_data_and_write_file_with_other_files(data, output_file_path, other_files):
+    result = process_data(data)
     # 写入文件
-    for file_name in output_files:
+    for langdic in result:
+        file_name = list(langdic.keys())[0]
         file_path = output_file_path + '/' + file_name + '.strings'
         os.makedirs(output_file_path, exist_ok=True)
+
+        other_open_files = []
+        for file in other_files:
+            other_file_name = list(file.keys())[0]
+            other_file_path = output_file_path + '/' + other_file_name + '.strings'
+            other_files.append(open(other_file_path, 'w'))
+
         with open(file_path, 'w') as f:
-            key_group = []
-            for row in data[1:]:
-                column1, column2 = row[0], row[output_files.index(file_name) + 1]
-                if column1 in key_group:
-                    continue
-                else:
-                    key_group.append(column1)
-                if column1 is not None and column1.strip() != "" and is_valid_data(column1, column2):
-                    line = f'"{column1}" = "{column2.replace("{#}", "%@")}" ;\n'
+            for lang_data in langdic[file_name]:
+                column1 = list(lang_data.keys())[0]
+                column2 = lang_data[column1]
+                line = f'"{column1}" = "{column2}" ;\n'
+
+                has_writed = False
+                for index in range(len(other_files)):
+                    file = other_files[index]
+                    key = list(file.keys())[0]
+                    if column1 in file[key]:
+                        other_files[index].write(line)
+                        has_writed = True
+                        break
+
+                if not has_writed:
                     f.write(line)
+        
+        for file in other_open_files:
+            file.close()
 
 # 程序入口
 if __name__ == '__main__':
@@ -60,4 +108,4 @@ if __name__ == '__main__':
 
     # 处理数据并写入文件
     output_file_path = './output'
-    process_data(data, output_file_path)
+    process_data_and_write_file(data, output_file_path)
