@@ -1,6 +1,5 @@
 import sys
 import openpyxl
-import pathlib
 import os
 
 # 检查路径是否为Excel文件
@@ -30,9 +29,7 @@ def process_data(data):
         if header_row[i]:
             langsDic.append({header_row[i]: []})
     
-    langs = []
-    for langDic in langsDic:
-        langs.append(list(langDic.keys())[0])
+    langs = list(map(lambda x: list(x.keys())[0], langsDic))
 
     for langDic in langsDic:
         lang = list(langDic.keys())[0]
@@ -48,7 +45,9 @@ def process_data(data):
                 key_group.append(column1)
 
             if column1 is not None and column1.strip() != "" and is_valid_data(column1, column2):
-                dic = {column1: column2.replace("{#}", "%@")}
+                if "\r\n" in column2:
+                    print(column2)
+                dic = {column1: column2.replace("{#}", "%@").replace('\n', '')}
                 langDic[lang].append(dic)
     return langsDic
         
