@@ -45,31 +45,33 @@ def process_data(data):
                 key_group.append(column1)
 
             if column1 is not None and column1.strip() != "" and is_valid_data(column1, column2):
-                if "\r\n" in column2:
-                    print(column2)
-                dic = {column1: column2.replace("{#}", "%@").replace('\n', '')}
+                dic = {column1: column2.replace("{#}", "%@").replace('\n', '').replace('"', '\\"')}
                 langDic[lang].append(dic)
     return langsDic
         
 
 # 处理数据并写入文件
 def process_data_and_write_file(data, output_file_path):
-    process_data_and_write_file_with_other_files(data, output_file_path, [])
+    process_data_and_write_file_with_other_files(data, output_file_path)
                     
 
-def process_data_and_write_file_with_other_files(data, output_file_path, other_files):
+def process_data_and_write_file_with_other_files(data, output_file_path, default_file_name=None, other_files=[]):
     result = process_data(data)
     # 写入文件
     for langdic in result:
         file_name = list(langdic.keys())[0]
-        file_path = output_file_path + '/' + file_name + '.strings'
-        os.makedirs(output_file_path, exist_ok=True)
+        parent_path = output_file_path + '/' + file_name
+        if default_file_name is not None:
+            file_path = parent_path + '/' + default_file_name + '.strings'
+        else:
+            file_path = parent_path + '/' + file_name + '.strings'
+        os.makedirs(parent_path, exist_ok=True)
 
         other_open_files = []
-        for file in other_files:
-            other_file_name = list(file.keys())[0]
-            other_file_path = output_file_path + '/' + other_file_name + '.strings'
-            other_files.append(open(other_file_path, 'w'))
+        for other_file in other_files:
+            other_file_name = list(other_file.keys())[0]
+            other_file_path = parent_path + '/' + other_file_name + '.strings'
+            other_open_files.append(open(other_file_path, 'w'))
 
         with open(file_path, 'w') as f:
             for lang_data in langdic[file_name]:
@@ -82,7 +84,7 @@ def process_data_and_write_file_with_other_files(data, output_file_path, other_f
                     file = other_files[index]
                     key = list(file.keys())[0]
                     if column1 in file[key]:
-                        other_files[index].write(line)
+                        other_open_files[index].write(line)
                         has_writed = True
                         break
 
