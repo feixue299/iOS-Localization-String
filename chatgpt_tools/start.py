@@ -27,7 +27,6 @@ if __name__ == "__main__":
 
     en_info_path = list(filter(lambda x: x.endswith("InfoPlist.strings"), lproj_folders["en"]))[0]
     en_info_result = list(map(lambda x: list(x.keys())[0], parse_file(en_info_path)))
-    print("en_info_result:", en_info_result)
 
     # 读取 Excel 数据
     data = read_excel_file(excel_path)
