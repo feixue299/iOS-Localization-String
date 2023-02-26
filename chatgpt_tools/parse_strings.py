@@ -1,6 +1,8 @@
 import argparse
 import re
 
+
+# result: [{}]
 def parse_file(filename):
     result = []
     with open(filename, "r") as f:
