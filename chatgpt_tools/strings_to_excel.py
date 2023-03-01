@@ -63,6 +63,26 @@ if __name__ == "__main__":
         else:
             continue
 
+        for index in range(1, len(lang_data)):
+            lang = lang_data[index]
+            
+            excel_data[lang[0]] = []
+
+            column_data = parse_file(lang[1])
+
+            for dic in first_column:
+                id_key = list(dic.keys())[0]
+                is_contains = False
+                for kv in column_data:
+                    column_key = list(kv.keys())[0]
+                    if column_key == id_key:
+                        is_contains = True
+                        excel_data[lang[0]].append(kv[column_key])
+                        break
+                if is_contains == False:
+                    excel_data[lang[0]].append("")
+
+
         df = pd.DataFrame(excel_data)
         parent_path = './output/'
         os.makedirs(parent_path, exist_ok=True)
