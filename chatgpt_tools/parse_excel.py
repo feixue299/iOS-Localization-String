@@ -1,6 +1,7 @@
 import sys
 import openpyxl
 import os
+import re
 
 # 检查路径是否为Excel文件
 def is_excel_file(file_path):
@@ -44,8 +45,18 @@ def process_data(data):
             else:
                 key_group.append(column1)
 
+            # 正则表达式模式
+            pattern = re.compile(r'=IFERROR\((.+?)\),"(.+)"\)')            
+
             if column1 is not None and column1.strip() != "" and is_valid_data(column1, column2):
+                # 如果单元格中包含=IFERROR函数，则提取默认值并替换单元格中的函数
+                if column2.startswith('=IFERROR'):
+                    match = re.search(pattern, column2)
+                    if match:
+                        column2 = match.group(2)
+
                 dic = {column1: column2.replace("{#}", "%@").replace('\n', '').replace('"', '\\"')}
+
                 langDic[lang].append(dic)
     return langsDic
         
