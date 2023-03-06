@@ -7,7 +7,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("project_path", help="Path to search for lproj folders")
     parser.add_argument("lang_excel_path", help="path to parse excel data")
-    parser.add_argument("default_name", help="string name")
+    parser.add_argument("default_name", default="Localizable", help="string name")
+    parser.add_argument('sync_write', default=False, help="sync write to lproj")
     args = parser.parse_args()
     lproj_folders = get_lproj_folders(args.project_path)
     excel_path = args.lang_excel_path
