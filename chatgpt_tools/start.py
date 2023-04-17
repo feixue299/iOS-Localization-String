@@ -28,6 +28,7 @@ if __name__ == "__main__":
     if sync_write != "False":
         for (key, value) in lproj_folders.items():
             for path in value:
+                print(path)
                 file_name = os.path.basename(path)
                 string_parent_path = output_file_path + "/" + key + "/" + file_name
 
