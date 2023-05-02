@@ -15,8 +15,13 @@ if __name__ == "__main__":
     default_name = args.default_name
     sync_write = args.sync_write
 
-    en_info_path = list(filter(lambda x: x.endswith("InfoPlist.strings"), lproj_folders["en"]))[0]
-    en_info_result = list(map(lambda x: list(x.keys())[0], parse_file(en_info_path)))
+    get_en_info_path = list(filter(lambda x: x.endswith("InfoPlist.strings"), lproj_folders["en"]))
+
+    other_files = []
+    if len(get_en_info_path) != 0 :
+        en_info_path = get_en_info_path[0]
+        en_info_result = list(map(lambda x: list(x.keys())[0], parse_file(en_info_path)))
+        other_files = [{"InfoPlist": en_info_result}]
 
     # 读取 Excel 数据
     data = read_excel_file(excel_path)
@@ -24,7 +29,7 @@ if __name__ == "__main__":
     # 处理数据并写入文件
     output_file_path = './output'
 
-    process_data_and_write_file_with_other_files(data, output_file_path, default_name, [{"InfoPlist": en_info_result}])
+    process_data_and_write_file_with_other_files(data, output_file_path, default_name, other_files)
     if sync_write != "False":
         for (key, value) in lproj_folders.items():
             for path in value:
